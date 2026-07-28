@@ -1,4 +1,4 @@
-import 'Frontend/generated/jar-resources/copilot.js';
+import 'Frontend/generated/jar-resources/copilot/copilot.js';
 // @ts-ignore
 if (import.meta.hot) {
   // @ts-ignore
@@ -35,7 +35,3 @@ import './index';
 
 import './vaadin-react.js';
 import 'Frontend/generated/jar-resources/vaadin-dev-tools/vaadin-dev-tools.js';
-
-import './theme-theftwatch.global.generated.js';
-import { applyTheme } from './theme.js';
-applyTheme(document);

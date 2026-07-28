@@ -2,16 +2,13 @@ package com.theftwatch.theftwatch.ui;
 
 import com.theftwatch.theftwatch.domain.enums.Role;
 import com.theftwatch.theftwatch.security.SecurityService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Layout;
 
-@Layout
 public class MainLayout extends AppLayout {
 
     private final SecurityService securityService;
