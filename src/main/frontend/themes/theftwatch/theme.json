@@ -1,0 +1,17 @@
+{
+  "name": "TheftWatch",
+  "lumoImports": [
+    "badge",
+    "button",
+    "card",
+    "checkbox",
+    "dialog",
+    "form-layout",
+    "grid",
+    "icon",
+    "text-field",
+    "details",
+    "notification",
+    "app-layout"
+  ]
+}
