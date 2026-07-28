@@ -1,0 +1,11 @@
+{
+  "name": "theftwatch",
+  "version": "0.1.0",
+  "description": "TheftWatch VMS Frontend",
+  "dependencies": {
+    "vaadin": "24.4.14"
+  },
+  "devDependencies": {
+    "vite": "5.2.0"
+  }
+}
