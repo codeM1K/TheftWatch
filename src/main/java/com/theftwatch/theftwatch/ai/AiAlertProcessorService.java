@@ -3,11 +3,11 @@ package com.theftwatch.theftwatch.ai;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AlertService {
+public class AiAlertProcessorService {
 
     private final Sige7InferenceService inferenceService;
 
-    public AlertService(Sige7InferenceService inferenceService) {
+    public AiAlertProcessorService(Sige7InferenceService inferenceService) {
         this.inferenceService = inferenceService;
     }
 
