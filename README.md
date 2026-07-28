@@ -13,6 +13,13 @@ Java 21 + Spring Boot 3 + Vaadin 24 video management system with AI-powered thef
 
 ## Quick Start
 
+### Default Credentials
+
+A default Super Admin is created on first startup:
+
+- **Email:** `admin@theftwatch.local`
+- **Password:** `admin123`
+
 ### Development (with Docker Compose)
 
 ```bash
