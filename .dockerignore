@@ -1,0 +1,8 @@
+**/*.jar
+**/*.war
+target/
+node_modules/
+.hls/
+.videos/
+*.log
+.env

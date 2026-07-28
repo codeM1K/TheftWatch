@@ -1,0 +1,11 @@
+.vscode/
+.idea/
+*.iml
+target/
+node_modules/
+.hls/
+.videos/
+.env
+*.log
+.DS_Store
+Thumbs.db
