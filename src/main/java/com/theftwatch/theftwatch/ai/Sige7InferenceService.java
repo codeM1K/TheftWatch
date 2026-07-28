@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class Sige7InferenceService {
@@ -24,25 +24,29 @@ public class Sige7InferenceService {
     @Value("${app.ai.sige7.inference-timeout:5s}")
     private String inferenceTimeout;
 
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     public Sige7InferenceService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .build();
+        this.restTemplate = new RestTemplate();
     }
 
     public InferenceResult detectTheft(String imageBase64, String cameraId) {
         try {
-            String response = webClient.post()
-                    .uri("/infer/theft")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue("{\"image\": \"" + imageBase64 + "\", \"camera_id\": \"" + cameraId + "\"}")
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            String requestBody = String.format("{\"image\": \"%s\", \"camera_id\": \"%s\"}",
+                    imageBase64.replace("\"", "\\\""), cameraId);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+            String response = restTemplate.postForObject(
+                    baseUrl + "/infer/theft",
+                    entity,
+                    String.class
+            );
 
             JsonNode json = objectMapper.readTree(response);
             boolean theftDetected = json.path("theft_detected").asBoolean(false);

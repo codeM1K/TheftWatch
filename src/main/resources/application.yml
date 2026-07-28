@@ -28,6 +28,7 @@ server:
 vaadin:
   frontend:
     url-mapping: /ui/*
+    scan-packages: com.theftwatch.theftwatch.ui
   devmode:
     live-reload: true
 

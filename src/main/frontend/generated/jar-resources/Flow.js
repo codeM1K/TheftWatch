@@ -253,7 +253,7 @@ export class Flow {
             script.onload = () => resolve();
             script.onerror = reject;
             script.src = url;
-            const nonce = $wnd.Vaadin.Flow.nonce;
+            const { nonce } = $wnd.Vaadin.Flow;
             if (nonce !== undefined) {
                 script.setAttribute('nonce', nonce);
             }
@@ -276,7 +276,7 @@ export class Flow {
         const scriptAppId = document.createElement('script');
         scriptAppId.type = 'module';
         scriptAppId.setAttribute('data-app-id', appIdWithoutHashCode);
-        const nonce = $wnd.Vaadin.Flow.nonce;
+        const { nonce } = $wnd.Vaadin.Flow;
         if (nonce !== undefined) {
             scriptAppId.setAttribute('nonce', nonce);
         }

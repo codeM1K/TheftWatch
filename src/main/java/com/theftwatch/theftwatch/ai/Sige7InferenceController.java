@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class Sige7InferenceController {
     private static final Logger log = LoggerFactory.getLogger(Sige7InferenceController.class);
 
     @PostMapping("/theft")
-    public Mono<ResponseEntity<Map<String, Object>>> detectTheft(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, Object>> detectTheft(@RequestBody Map<String, Object> payload) {
         String cameraId = (String) payload.get("camera_id");
         String imageBase64 = (String) payload.get("image");
 
@@ -43,14 +42,14 @@ public class Sige7InferenceController {
                 "camera_id", cameraId
         );
 
-        return Mono.just(ResponseEntity.ok(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/health")
-    public Mono<ResponseEntity<Map<String, Object>>> health() {
-        return Mono.just(ResponseEntity.ok(Map.of(
+    public ResponseEntity<Map<String, Object>> health() {
+        return ResponseEntity.ok(Map.of(
                 "status", "ok",
                 "timestamp", LocalDateTime.now().toString()
-        )));
+        ));
     }
 }
