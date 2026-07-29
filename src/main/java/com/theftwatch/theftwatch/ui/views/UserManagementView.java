@@ -2,7 +2,7 @@ package com.theftwatch.theftwatch.ui.views;
 
 import com.theftwatch.theftwatch.domain.User;
 import com.theftwatch.theftwatch.domain.enums.Role;
-import com.theftwatch.theftwatch.service.SecurityService;
+import com.theftwatch.theftwatch.security.SecurityService;
 import com.theftwatch.theftwatch.service.UserService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
