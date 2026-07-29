@@ -33,6 +33,7 @@ vaadin:
     live-reload: true
   push:
     enabled: false
+    transport: none
 
 logging:
   level:
