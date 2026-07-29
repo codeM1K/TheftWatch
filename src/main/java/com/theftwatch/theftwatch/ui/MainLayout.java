@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.server.VaadinServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class MainLayout extends AppLayout implements RouterLayout {
@@ -62,9 +63,8 @@ public class MainLayout extends AppLayout implements RouterLayout {
     }
 
     private boolean isAuthenticated() {
-        return SecurityContextHolder.getContext().getAuthentication() != null
-                && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
-                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        var principal = VaadinServletRequest.getCurrent().getUserPrincipal();
+        return principal != null && !"anonymousUser".equals(principal.getName());
     }
 
     private boolean hasRole(Role role) {
