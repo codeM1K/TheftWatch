@@ -11,36 +11,21 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.RouterLayout;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class MainLayout extends AppLayout implements RouterLayout {
 
     private final SecurityService securityService;
+    private VerticalLayout drawer;
 
     public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
 
-        VerticalLayout drawer = new VerticalLayout();
+        drawer = new VerticalLayout();
         drawer.setPadding(true);
         drawer.setSpacing(true);
         drawer.setWidthFull();
         drawer.addClassName("main-drawer");
-
-        if (securityService.isLoggedIn()) {
-            drawer.add(createNavLink("Dashboard", ""));
-            drawer.add(createNavLink("Cameras", "cameras"));
-            drawer.add(createNavLink("Alerts", "alerts"));
-
-            if (securityService.hasRole(Role.SUPER_ADMIN) || securityService.hasRole(Role.SPECIAL_ADMIN)) {
-                drawer.add(createNavLink("Realms", "realms"));
-                drawer.add(createNavLink("Users", "users"));
-            }
-
-            if (securityService.hasRole(Role.SUPER_ADMIN)) {
-                drawer.add(createNavLink("Administration", "admin"));
-            }
-
-            drawer.add(createNavLink("Logout", "/logout"));
-        }
 
         HorizontalLayout header = new HorizontalLayout(new H1("TheftWatch"));
         header.setWidthFull();
@@ -50,6 +35,45 @@ public class MainLayout extends AppLayout implements RouterLayout {
 
         addToNavbar(header);
         addToDrawer(drawer);
+    }
+
+    @Override
+    public void beforeNavigation(BeforeEvent event) {
+        Location location = event.getLocation();
+        String path = location.getPath();
+
+        drawer.removeAll();
+
+        if (isAuthenticated()) {
+            drawer.add(createNavLink("Dashboard", ""));
+            drawer.add(createNavLink("Cameras", "cameras"));
+            drawer.add(createNavLink("Alerts", "alerts"));
+
+            if (hasRole(Role.SUPER_ADMIN) || hasRole(Role.SPECIAL_ADMIN)) {
+                drawer.add(createNavLink("Realms", "realms"));
+                drawer.add(createNavLink("Users", "users"));
+            }
+
+            if (hasRole(Role.SUPER_ADMIN)) {
+                drawer.add(createNavLink("Administration", "admin"));
+            }
+
+            drawer.add(createNavLink("Logout", "/logout"));
+        }
+    }
+
+    private boolean isAuthenticated() {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
+
+    private boolean hasRole(Role role) {
+        if (!isAuthenticated()) {
+            return false;
+        }
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_" + role.name()));
     }
 
     private Anchor createNavLink(String text, String route) {
