@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/robots.txt"
                         ).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable())
