@@ -8,8 +8,11 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.RouterLayout;
 
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout implements RouterLayout {
 
     private final SecurityService securityService;
 
@@ -18,8 +21,9 @@ public class MainLayout extends AppLayout {
 
         VerticalLayout drawer = new VerticalLayout();
         drawer.setPadding(true);
-        drawer.setSpacing(false);
+        drawer.setSpacing(true);
         drawer.setWidthFull();
+        drawer.addClassName("main-drawer");
 
         if (securityService.isLoggedIn()) {
             drawer.add(createNavLink("Dashboard", ""));
@@ -42,6 +46,7 @@ public class MainLayout extends AppLayout {
         header.setWidthFull();
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.addClassName("main-header");
 
         addToNavbar(header);
         addToDrawer(drawer);
