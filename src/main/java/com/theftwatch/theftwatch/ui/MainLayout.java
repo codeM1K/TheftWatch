@@ -37,7 +37,6 @@ public class MainLayout extends AppLayout implements RouterLayout {
         addToDrawer(drawer);
     }
 
-    @Override
     public void beforeNavigation(BeforeEvent event) {
         Location location = event.getLocation();
         String path = location.getPath();
