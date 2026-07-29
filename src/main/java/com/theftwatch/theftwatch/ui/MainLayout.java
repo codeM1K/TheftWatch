@@ -18,6 +18,7 @@ public class MainLayout extends AppLayout {
 
         drawer.add(createNavLink("Dashboard", ""));
         drawer.add(createNavLink("Cameras", "cameras"));
+        drawer.add(createNavLink("Streaming", "streaming"));
         drawer.add(createNavLink("Alerts", "alerts"));
         drawer.add(createNavLink("Realms", "realms"));
         drawer.add(createNavLink("Users", "users"));
