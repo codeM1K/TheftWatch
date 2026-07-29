@@ -29,6 +29,7 @@ public class SecurityConfig {
                                 "/icons/**",
                                 "/VAADIN/**",
                                 "/frontend/**",
+                                "/HILLA/**",
                                 "/manifest.webmanifest",
                                 "/h2-console/**"
                         ).permitAll()
