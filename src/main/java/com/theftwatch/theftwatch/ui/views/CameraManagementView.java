@@ -61,7 +61,7 @@ public class CameraManagementView extends VerticalLayout {
         refreshRealmComboBox();
     }
 
-    public void beforeNavigation(com.vaadin.flow.router.BeforeEvent event) {
+    public void beforeNavigation(BeforeEvent event) {
         refreshRealmComboBox();
     }
 
@@ -78,46 +78,62 @@ public class CameraManagementView extends VerticalLayout {
             return;
         }
 
-        Camera camera = cameraService.createCamera(
-                name.trim(),
-                modelField.getValue(),
-                rtspUrlField.getValue(),
-                usernameField.getValue(),
-                passwordField.getValue(),
-                ipAddressField.getValue(),
-                realm,
-                null
-        );
+        try {
+            Camera camera = cameraService.createCamera(
+                    name.trim(),
+                    modelField.getValue(),
+                    rtspUrlField.getValue(),
+                    usernameField.getValue(),
+                    passwordField.getValue(),
+                    ipAddressField.getValue(),
+                    realm,
+                    null
+            );
 
-        Notification.show("Camera added: " + camera.getName(), 3000, Notification.Position.MIDDLE);
-        refreshGrid();
-        clearForm();
+            Notification.show("Camera added: " + camera.getName(), 3000, Notification.Position.MIDDLE);
+            refreshGrid();
+            clearForm();
+        } catch (Exception e) {
+            Notification.show("Failed to add camera: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+        }
     }
 
     private void deleteSelectedCamera() {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
-            cameraService.stopStream(selected.getId());
-            Notification.show("Camera deleted: " + selected.getName(), 3000, Notification.Position.MIDDLE);
-            refreshGrid();
+            try {
+                cameraService.deleteCamera(selected.getId());
+                Notification.show("Camera deleted: " + selected.getName(), 3000, Notification.Position.MIDDLE);
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to delete camera: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         }
     }
 
     private void startSelectedCamera() {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
-            cameraService.startStream(selected.getId());
-            Notification.show("Stream started for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
-            refreshGrid();
+            try {
+                cameraService.startStream(selected.getId());
+                Notification.show("Stream started for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to start stream: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         }
     }
 
     private void stopSelectedCamera() {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
-            cameraService.stopStream(selected.getId());
-            Notification.show("Stream stopped for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
-            refreshGrid();
+            try {
+                cameraService.stopStream(selected.getId());
+                Notification.show("Stream stopped for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to stop stream: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         }
     }
 

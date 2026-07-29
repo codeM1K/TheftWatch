@@ -26,6 +26,22 @@ public class RealmService {
         return realmRepository.save(realm);
     }
 
+    @Transactional
+    public Realm updateRealm(String id, String name, String description) {
+        Realm realm = realmRepository.findById(id).orElse(null);
+        if (realm == null) {
+            throw new IllegalArgumentException("Realm not found");
+        }
+        realm.setName(name);
+        realm.setDescription(description);
+        return realmRepository.save(realm);
+    }
+
+    @Transactional
+    public void deleteRealm(String id) {
+        realmRepository.deleteById(id);
+    }
+
     public List<Realm> findAll() {
         return realmRepository.findAll();
     }

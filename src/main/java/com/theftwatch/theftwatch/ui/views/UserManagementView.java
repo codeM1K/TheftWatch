@@ -57,31 +57,44 @@ public class UserManagementView extends VerticalLayout {
     }
 
     private void addUser() {
-        if (emailField.getValue() == null || emailField.getValue().isEmpty()) {
+        String email = emailField.getValue();
+        String password = passwordField.getValue();
+
+        if (email == null || email.isBlank()) {
             Notification.show("Email is required", 3000, Notification.Position.MIDDLE);
             return;
         }
-        if (passwordField.getValue() == null || passwordField.getValue().isEmpty()) {
+        if (password == null || password.isBlank()) {
             Notification.show("Password is required", 3000, Notification.Position.MIDDLE);
             return;
         }
-        User user = userService.createUser(
-                emailField.getValue(),
-                passwordField.getValue(),
-                fullNameField.getValue(),
-                roleComboBox.getValue() != null ? roleComboBox.getValue() : Role.END_USER,
-                null
-        );
-        Notification.show("User created: " + user.getEmail());
-        refreshGrid();
-        clearForm();
+
+        try {
+            User user = userService.createUser(
+                    email.trim(),
+                    password,
+                    fullNameField.getValue(),
+                    roleComboBox.getValue() != null ? roleComboBox.getValue() : Role.END_USER,
+                    null
+            );
+            Notification.show("User created: " + user.getEmail(), 3000, Notification.Position.MIDDLE);
+            refreshGrid();
+            clearForm();
+        } catch (Exception e) {
+            Notification.show("Failed to create user: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+        }
     }
 
     private void deleteSelectedUser() {
         User selected = userGrid.asSingleSelect().getValue();
         if (selected != null) {
-            Notification.show("User deleted: " + selected.getEmail());
-            refreshGrid();
+            try {
+                userService.deleteUser(selected.getEmail());
+                Notification.show("User deleted: " + selected.getEmail(), 3000, Notification.Position.MIDDLE);
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to delete user: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         }
     }
 
@@ -109,11 +122,19 @@ public class UserManagementView extends VerticalLayout {
         dialog.add(form);
 
         Button saveButton = new Button("Save", event -> {
-            user.setFullName(fullNameField.getValue());
-            user.setRole(roleComboBox.getValue());
-            Notification.show("User updated: " + user.getEmail());
-            dialog.close();
-            refreshGrid();
+            try {
+                userService.updateUser(
+                        user.getEmail(),
+                        fullNameField.getValue(),
+                        roleComboBox.getValue(),
+                        passwordField.getValue()
+                );
+                Notification.show("User updated: " + user.getEmail(), 3000, Notification.Position.MIDDLE);
+                dialog.close();
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to update user: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         });
 
         Button cancelButton = new Button("Cancel", event -> dialog.close());

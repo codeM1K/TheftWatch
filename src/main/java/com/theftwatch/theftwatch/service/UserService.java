@@ -31,6 +31,25 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public User updateUser(String email, String fullName, Role role, String newPassword) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        user.setFullName(fullName);
+        user.setRole(role);
+        if (newPassword != null && !newPassword.isBlank()) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(String email) {
+        userRepository.deleteByEmail(email);
+    }
+
     public List<User> findAll() {
         return userRepository.findAll();
     }

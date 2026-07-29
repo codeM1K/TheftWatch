@@ -94,9 +94,8 @@ public class RealmManagementView extends VerticalLayout {
 
         Button saveButton = new Button("Save", event -> {
             try {
-                realm.setName(nameField.getValue());
-                realm.setDescription(descriptionField.getValue());
-                Notification.show("Realm updated: " + realm.getName(), 3000, Notification.Position.MIDDLE);
+                realmService.updateRealm(realm.getId(), nameField.getValue(), descriptionField.getValue());
+                Notification.show("Realm updated: " + nameField.getValue(), 3000, Notification.Position.MIDDLE);
                 dialog.close();
                 refreshGrid();
             } catch (Exception e) {
@@ -104,8 +103,19 @@ public class RealmManagementView extends VerticalLayout {
             }
         });
 
+        Button deleteButton = new Button("Delete", event -> {
+            try {
+                realmService.deleteRealm(realm.getId());
+                Notification.show("Realm deleted: " + realm.getName(), 3000, Notification.Position.MIDDLE);
+                dialog.close();
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to delete realm: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
+        });
+
         Button cancelButton = new Button("Cancel", event -> dialog.close());
-        HorizontalLayout buttons = new HorizontalLayout(saveButton, cancelButton);
+        HorizontalLayout buttons = new HorizontalLayout(saveButton, deleteButton, cancelButton);
         dialog.getFooter().add(buttons);
         dialog.open();
     }

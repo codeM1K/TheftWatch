@@ -43,6 +43,15 @@ public class CameraService {
     }
 
     @Transactional
+    public void deleteCamera(String cameraId) {
+        Camera camera = cameraRepository.findById(cameraId).orElse(null);
+        if (camera != null) {
+            streamIngestionService.stopStream(cameraId);
+            cameraRepository.delete(camera);
+        }
+    }
+
+    @Transactional
     public void startStream(String cameraId) {
         Camera camera = cameraRepository.findById(cameraId).orElse(null);
         if (camera != null) {
