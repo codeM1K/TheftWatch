@@ -31,6 +31,8 @@ vaadin:
     scan-packages: com.theftwatch.theftwatch.ui
   devmode:
     live-reload: true
+  push:
+    enabled: false
 
 logging:
   level:

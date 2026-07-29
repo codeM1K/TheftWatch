@@ -36,6 +36,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/ai/inference/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
@@ -51,3 +54,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
