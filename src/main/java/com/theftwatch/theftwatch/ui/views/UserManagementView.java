@@ -2,6 +2,7 @@ package com.theftwatch.theftwatch.ui.views;
 
 import com.theftwatch.theftwatch.domain.User;
 import com.theftwatch.theftwatch.domain.enums.Role;
+import com.theftwatch.theftwatch.service.SecurityService;
 import com.theftwatch.theftwatch.service.UserService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -23,6 +24,7 @@ import java.util.List;
 public class UserManagementView extends VerticalLayout {
 
     private final UserService userService;
+    private final SecurityService securityService;
 
     private final Grid<User> userGrid = new Grid<>(User.class);
     private final TextField emailField = new TextField("Email");
@@ -30,8 +32,9 @@ public class UserManagementView extends VerticalLayout {
     private final PasswordField passwordField = new PasswordField("Password");
     private final ComboBox<Role> roleComboBox = new ComboBox<>("Role");
 
-    public UserManagementView(UserService userService) {
+    public UserManagementView(UserService userService, SecurityService securityService) {
         this.userService = userService;
+        this.securityService = securityService;
 
         userGrid.setColumns("email", "fullName", "role", "enabled", "createdAt");
         userGrid.setSizeFull();
@@ -70,12 +73,13 @@ public class UserManagementView extends VerticalLayout {
         }
 
         try {
+            User currentUser = securityService.getCurrentUser();
             User user = userService.createUser(
                     email.trim(),
                     password,
                     fullNameField.getValue(),
                     roleComboBox.getValue() != null ? roleComboBox.getValue() : Role.END_USER,
-                    null
+                    currentUser
             );
             Notification.show("User created: " + user.getEmail(), 3000, Notification.Position.MIDDLE);
             refreshGrid();
