@@ -6,6 +6,7 @@ import com.theftwatch.theftwatch.service.CameraService;
 import com.theftwatch.theftwatch.service.RealmService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
@@ -49,8 +50,9 @@ public class CameraManagementView extends VerticalLayout {
         Button addButton = new Button("Add Camera", event -> addCamera());
         Button startStreamButton = new Button("Start Stream", event -> startSelectedCamera());
         Button stopStreamButton = new Button("Stop Stream", event -> stopSelectedCamera());
+        Button deleteButton = new Button("Delete", event -> deleteSelectedCamera());
 
-        HorizontalLayout buttons = new HorizontalLayout(addButton, startStreamButton, stopStreamButton);
+        HorizontalLayout buttons = new HorizontalLayout(addButton, startStreamButton, stopStreamButton, deleteButton);
 
         add(form, buttons, cameraGrid);
         setSizeFull();
@@ -78,6 +80,19 @@ public class CameraManagementView extends VerticalLayout {
         Notification.show("Camera added: " + camera.getName());
         refreshGrid();
         clearForm();
+    }
+
+    private void deleteSelectedCamera() {
+        Camera selected = cameraGrid.asSingleSelect().getValue();
+        if (selected != null) {
+            cameraService.stopStream(selected.getId());
+            cameraService.findAll().stream()
+                    .filter(c -> c.getId().equals(selected.getId()))
+                    .findFirst()
+                    .ifPresent(cameraService.findAll()::remove);
+            Notification.show("Camera deleted: " + selected.getName());
+            refreshGrid();
+        }
     }
 
     private void startSelectedCamera() {

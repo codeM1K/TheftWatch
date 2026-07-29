@@ -2,12 +2,17 @@ package com.theftwatch.theftwatch.ui.views;
 
 import com.theftwatch.theftwatch.service.AlertService;
 import com.theftwatch.theftwatch.domain.Alert;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import java.util.List;
 
 @Route(value = "alerts", layout = com.theftwatch.theftwatch.ui.MainLayout.class)
 @PageTitle("Alerts")
@@ -28,28 +33,34 @@ public class AlertView extends VerticalLayout {
             }
         });
 
-        add(alertGrid);
+        Button refreshButton = new Button("Refresh", event -> refreshGrid());
+        add(refreshButton, alertGrid);
+        setSizeFull();
         refreshGrid();
     }
 
     private void showAlertDetail(Alert alert) {
-        Div detail = new Div();
-        detail.addClassName("alert-detail");
+        Dialog dialog = new Dialog();
+        dialog.setWidth("500px");
+        dialog.setHeaderTitle("Alert Details");
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<h3>").append(alert.getTitle()).append("</h3>");
-        sb.append("<p><b>Severity:</b> ").append(alert.getSeverity()).append("</p>");
-        sb.append("<p><b>Status:</b> ").append(alert.getStatus()).append("</p>");
-        sb.append("<p><b>Detected:</b> ").append(alert.getDetectedAt()).append("</p>");
-        if (alert.getDescription() != null) {
-            sb.append("<p><b>Description:</b> ").append(alert.getDescription()).append("</p>");
+        VerticalLayout content = new VerticalLayout();
+        content.add(new H3(alert.getTitle()));
+        content.add(new Paragraph("Severity: " + alert.getSeverity()));
+        content.add(new Paragraph("Status: " + alert.getStatus()));
+        content.add(new Paragraph("Detected: " + alert.getDetectedAt()));
+        if (alert.getDescription() != null && !alert.getDescription().isEmpty()) {
+            content.add(new Paragraph("Description: " + alert.getDescription()));
         }
 
-        detail.getElement().setProperty("innerHTML", sb.toString());
-        add(detail);
+        dialog.add(content);
+        Button closeButton = new Button("Close", event -> dialog.close());
+        dialog.getFooter().add(closeButton);
+        dialog.open();
     }
 
     private void refreshGrid() {
-        alertGrid.setItems(alertService.findAll());
+        List<Alert> alerts = alertService.findAll();
+        alertGrid.setItems(alerts);
     }
 }
