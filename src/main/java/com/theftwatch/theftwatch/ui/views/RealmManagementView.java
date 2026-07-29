@@ -13,6 +13,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.BeforeEvent;
 
 import java.util.List;
 
@@ -49,17 +50,28 @@ public class RealmManagementView extends VerticalLayout {
         refreshGrid();
     }
 
+    public void beforeNavigation(BeforeEvent event) {
+        refreshGrid();
+    }
+
     private void addRealm() {
         String name = nameField.getValue();
+        String description = descriptionField.getValue();
+
         if (name == null || name.isBlank()) {
             Notification.show("Realm name is required", 3000, Notification.Position.MIDDLE);
+            nameField.focus();
             return;
         }
 
-        Realm realm = realmService.createRealm(name.trim(), descriptionField.getValue(), null);
-        Notification.show("Realm created: " + realm.getName(), 3000, Notification.Position.MIDDLE);
-        clearForm();
-        refreshGrid();
+        try {
+            Realm realm = realmService.createRealm(name.trim(), description != null ? description : "", null);
+            Notification.show("Realm created: " + realm.getName(), 3000, Notification.Position.MIDDLE);
+            clearForm();
+            refreshGrid();
+        } catch (Exception e) {
+            Notification.show("Failed to create realm: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+        }
     }
 
     private void openEditDialog(Realm realm) {
@@ -77,11 +89,15 @@ public class RealmManagementView extends VerticalLayout {
         dialog.add(form);
 
         Button saveButton = new Button("Save", event -> {
-            realm.setName(nameField.getValue());
-            realm.setDescription(descriptionField.getValue());
-            Notification.show("Realm updated: " + realm.getName(), 3000, Notification.Position.MIDDLE);
-            dialog.close();
-            refreshGrid();
+            try {
+                realm.setName(nameField.getValue());
+                realm.setDescription(descriptionField.getValue());
+                Notification.show("Realm updated: " + realm.getName(), 3000, Notification.Position.MIDDLE);
+                dialog.close();
+                refreshGrid();
+            } catch (Exception e) {
+                Notification.show("Failed to update realm: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
         });
 
         Button cancelButton = new Button("Cancel", event -> dialog.close());
