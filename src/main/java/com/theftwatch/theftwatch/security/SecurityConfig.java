@@ -23,7 +23,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login/**", "/images/**", "/icons/**", "/h2-console/**").permitAll()
+                        .requestMatchers(
+                                "/login/**",
+                                "/images/**",
+                                "/icons/**",
+                                "/VAADIN/**",
+                                "/frontend/**",
+                                "/manifest.webmanifest",
+                                "/h2-console/**"
+                        ).permitAll()
                         .requestMatchers("/api/ai/inference/**").permitAll()
                         .anyRequest().authenticated()
                 )
