@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 "/frontend/**",
                                 "/HILLA/**",
                                 "/manifest.webmanifest",
+                                "/offline-stub.html",
                                 "/h2-console/**",
                                 "/favicon.ico",
                                 "/robots.txt"
