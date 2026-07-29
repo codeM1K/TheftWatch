@@ -41,8 +41,8 @@ public class RealmManagementView extends VerticalLayout {
 
         FormLayout form = new FormLayout(nameField, descriptionField);
         Button addButton = new Button("Add Realm", event -> addRealm());
-        Button deleteButton = new Button("Delete Selected", event -> deleteSelectedRealm());
-        HorizontalLayout buttons = new HorizontalLayout(addButton, deleteButton);
+        Button refreshButton = new Button("Refresh", event -> refreshGrid());
+        HorizontalLayout buttons = new HorizontalLayout(addButton, refreshButton);
 
         add(form, buttons, realmGrid);
         setSizeFull();
@@ -50,22 +50,16 @@ public class RealmManagementView extends VerticalLayout {
     }
 
     private void addRealm() {
-        if (nameField.getValue() == null || nameField.getValue().isEmpty()) {
+        String name = nameField.getValue();
+        if (name == null || name.isBlank()) {
             Notification.show("Realm name is required", 3000, Notification.Position.MIDDLE);
             return;
         }
-        Realm realm = realmService.createRealm(nameField.getValue(), descriptionField.getValue(), null);
-        Notification.show("Realm created: " + realm.getName());
-        refreshGrid();
-        clearForm();
-    }
 
-    private void deleteSelectedRealm() {
-        Realm selected = realmGrid.asSingleSelect().getValue();
-        if (selected != null) {
-            Notification.show("Realm deleted: " + selected.getName());
-            refreshGrid();
-        }
+        Realm realm = realmService.createRealm(name.trim(), descriptionField.getValue(), null);
+        Notification.show("Realm created: " + realm.getName(), 3000, Notification.Position.MIDDLE);
+        clearForm();
+        refreshGrid();
     }
 
     private void openEditDialog(Realm realm) {
@@ -85,7 +79,7 @@ public class RealmManagementView extends VerticalLayout {
         Button saveButton = new Button("Save", event -> {
             realm.setName(nameField.getValue());
             realm.setDescription(descriptionField.getValue());
-            Notification.show("Realm updated: " + realm.getName());
+            Notification.show("Realm updated: " + realm.getName(), 3000, Notification.Position.MIDDLE);
             dialog.close();
             refreshGrid();
         });

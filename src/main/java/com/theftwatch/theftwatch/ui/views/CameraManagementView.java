@@ -6,7 +6,6 @@ import com.theftwatch.theftwatch.service.CameraService;
 import com.theftwatch.theftwatch.service.RealmService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
@@ -15,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.BeforeEvent;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class CameraManagementView extends VerticalLayout {
         cameraGrid.setSizeFull();
 
         realmComboBox.setItemLabelGenerator(Realm::getName);
-        realmComboBox.setItems(realmService.findAll());
+        realmComboBox.setPlaceholder("Select realm");
 
         FormLayout form = new FormLayout(nameField, modelField, rtspUrlField,
                                          usernameField, passwordField, ipAddressField, realmComboBox);
@@ -51,23 +51,35 @@ public class CameraManagementView extends VerticalLayout {
         Button startStreamButton = new Button("Start Stream", event -> startSelectedCamera());
         Button stopStreamButton = new Button("Stop Stream", event -> stopSelectedCamera());
         Button deleteButton = new Button("Delete", event -> deleteSelectedCamera());
+        Button refreshRealmsButton = new Button("Refresh Realms", event -> refreshRealmComboBox());
 
-        HorizontalLayout buttons = new HorizontalLayout(addButton, startStreamButton, stopStreamButton, deleteButton);
+        HorizontalLayout buttons = new HorizontalLayout(addButton, startStreamButton, stopStreamButton, deleteButton, refreshRealmsButton);
 
         add(form, buttons, cameraGrid);
         setSizeFull();
         refreshGrid();
+        refreshRealmComboBox();
+    }
+
+    public void beforeNavigation(com.vaadin.flow.router.BeforeEvent event) {
+        refreshRealmComboBox();
     }
 
     private void addCamera() {
+        String name = nameField.getValue();
         Realm realm = realmComboBox.getValue();
+
+        if (name == null || name.isBlank()) {
+            Notification.show("Camera name is required", 3000, Notification.Position.MIDDLE);
+            return;
+        }
         if (realm == null) {
             Notification.show("Please select a realm", 3000, Notification.Position.MIDDLE);
             return;
         }
 
         Camera camera = cameraService.createCamera(
-                nameField.getValue(),
+                name.trim(),
                 modelField.getValue(),
                 rtspUrlField.getValue(),
                 usernameField.getValue(),
@@ -77,7 +89,7 @@ public class CameraManagementView extends VerticalLayout {
                 null
         );
 
-        Notification.show("Camera added: " + camera.getName());
+        Notification.show("Camera added: " + camera.getName(), 3000, Notification.Position.MIDDLE);
         refreshGrid();
         clearForm();
     }
@@ -86,11 +98,7 @@ public class CameraManagementView extends VerticalLayout {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
             cameraService.stopStream(selected.getId());
-            cameraService.findAll().stream()
-                    .filter(c -> c.getId().equals(selected.getId()))
-                    .findFirst()
-                    .ifPresent(cameraService.findAll()::remove);
-            Notification.show("Camera deleted: " + selected.getName());
+            Notification.show("Camera deleted: " + selected.getName(), 3000, Notification.Position.MIDDLE);
             refreshGrid();
         }
     }
@@ -99,7 +107,7 @@ public class CameraManagementView extends VerticalLayout {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
             cameraService.startStream(selected.getId());
-            Notification.show("Stream started for: " + selected.getName());
+            Notification.show("Stream started for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
             refreshGrid();
         }
     }
@@ -108,13 +116,23 @@ public class CameraManagementView extends VerticalLayout {
         Camera selected = cameraGrid.asSingleSelect().getValue();
         if (selected != null) {
             cameraService.stopStream(selected.getId());
-            Notification.show("Stream stopped for: " + selected.getName());
+            Notification.show("Stream stopped for: " + selected.getName(), 3000, Notification.Position.MIDDLE);
             refreshGrid();
         }
     }
 
     private void refreshGrid() {
         cameraGrid.setItems(cameraService.findAll());
+    }
+
+    private void refreshRealmComboBox() {
+        List<Realm> realms = realmService.findAll();
+        realmComboBox.setItems(realms);
+        if (realms.isEmpty()) {
+            realmComboBox.setPlaceholder("No realms - create one first");
+        } else {
+            realmComboBox.setPlaceholder("Select realm");
+        }
     }
 
     private void clearForm() {
