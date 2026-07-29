@@ -1,6 +1,7 @@
 package com.theftwatch.theftwatch.ui.views;
 
 import com.theftwatch.theftwatch.domain.Realm;
+import com.theftwatch.theftwatch.security.SecurityService;
 import com.theftwatch.theftwatch.service.RealmService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -22,13 +23,15 @@ import java.util.List;
 public class RealmManagementView extends VerticalLayout {
 
     private final RealmService realmService;
+    private final SecurityService securityService;
 
     private final Grid<Realm> realmGrid = new Grid<>(Realm.class);
     private final TextField nameField = new TextField("Realm Name");
     private final TextArea descriptionField = new TextArea("Description");
 
-    public RealmManagementView(RealmService realmService) {
+    public RealmManagementView(RealmService realmService, SecurityService securityService) {
         this.realmService = realmService;
+        this.securityService = securityService;
 
         realmGrid.setColumns("name", "description", "createdAt");
         realmGrid.setSizeFull();
@@ -65,7 +68,8 @@ public class RealmManagementView extends VerticalLayout {
         }
 
         try {
-            Realm realm = realmService.createRealm(name.trim(), description != null ? description : "", null);
+            var currentUser = securityService.getCurrentUser();
+            Realm realm = realmService.createRealm(name.trim(), description != null ? description : "", currentUser);
             Notification.show("Realm created: " + realm.getName(), 3000, Notification.Position.MIDDLE);
             clearForm();
             refreshGrid();
