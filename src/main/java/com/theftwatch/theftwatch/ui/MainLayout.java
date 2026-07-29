@@ -2,7 +2,7 @@ package com.theftwatch.theftwatch.ui;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -24,7 +24,10 @@ public class MainLayout extends AppLayout {
         drawer.add(createNavLink("Administration", "admin"));
         drawer.add(createNavLink("Logout", "/logout"));
 
-        HorizontalLayout header = new HorizontalLayout(new H1("TheftWatch"));
+        Image logo = new Image("images/logo.png", "TheftWatch Logo");
+        logo.getStyle().set("height", "40px").set("width", "auto").set("padding", "4px 0");
+
+        HorizontalLayout header = new HorizontalLayout(logo);
         header.setWidthFull();
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.setAlignItems(FlexComponent.Alignment.CENTER);
