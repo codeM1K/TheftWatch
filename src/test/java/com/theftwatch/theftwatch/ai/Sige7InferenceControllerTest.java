@@ -1,48 +1,47 @@
 package com.theftwatch.theftwatch.ai;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebFluxTest(Sige7InferenceController.class)
+@WebMvcTest(Sige7InferenceController.class)
 class Sige7InferenceControllerTest {
 
     @Autowired
-    private WebTestClient webTestClient;
+    private MockMvc mockMvc;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void healthEndpointShouldReturnOk() {
-        webTestClient.get()
-                .uri("/api/ai/inference/health")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Map.class)
-                .value(body -> assertTrue(body.containsKey("status")));
+    void healthEndpointShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/api/ai/inference/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ok"));
     }
 
     @Test
-    void theftDetectionEndpointShouldReturnResult() {
+    void theftDetectionEndpointShouldReturnResult() throws Exception {
         Map<String, Object> payload = Map.of(
                 "image", "base64encodedimage",
                 "camera_id", "camera-123"
         );
 
-        webTestClient.post()
-                .uri("/api/ai/inference/theft")
-                .bodyValue(payload)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Map.class)
-                .value(body -> {
-                    assertTrue(body.containsKey("theft_detected"));
-                    assertTrue(body.containsKey("confidence"));
-                    assertTrue(body.containsKey("timestamp"));
-                });
+        mockMvc.perform(post("/api/ai/inference/theft")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.theft_detected").exists())
+                .andExpect(jsonPath("$.confidence").exists())
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }

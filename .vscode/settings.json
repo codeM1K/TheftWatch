@@ -1,0 +1,5 @@
+{
+  "java.annotationProcessing.enabled": true,
+  "maven.executable.path": "mvn",
+  "java.compile.nullAnalysis.mode": "automatic"
+}
