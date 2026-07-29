@@ -12,6 +12,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class TheftWatchApplication implements AppShellConfigurator {
 
+    static {
+        System.setProperty("vaadin.push.enabled", "false");
+        System.setProperty("atmosphere.autoDetect", "false");
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(TheftWatchApplication.class, args);
     }
