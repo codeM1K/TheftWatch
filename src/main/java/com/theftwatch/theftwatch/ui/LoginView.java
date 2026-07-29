@@ -51,6 +51,6 @@ public class LoginView extends VerticalLayout {
             }
         });
 
-        add(new Html("<div style='text-align:center'>"), title, email, password, loginButton);
+        add(new Html("<div style='text-align:center'></div>"), title, email, password, loginButton);
     }
 }
