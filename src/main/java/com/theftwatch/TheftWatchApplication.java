@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableAsync
 @EnableScheduling
-@Theme(value = "lumo")
 public class TheftWatchApplication implements AppShellConfigurator {
 
     public static void main(String[] args) {
