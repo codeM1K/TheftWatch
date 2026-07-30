@@ -19,7 +19,7 @@ public class StreamIngestionService {
     @Value("${app.streaming.ffmpeg-path:ffmpeg}")
     private String ffmpegPath;
 
-    @Value("${app.streaming.hls-output-dir:/data/hls}")
+    @Value("${app.streaming.hls-output-dir:/tmp/theftwatch/hls}")
     private String hlsOutputDir;
 
     @Value("${app.storage.video-base-path:/data/videos}")
